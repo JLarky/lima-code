@@ -1,44 +1,40 @@
-First, set up an alias in your shell on your host machine
+Set up an alias in your shell on your host machine:
 
 ```bash
-alias lcode='lima mise x deno -- deno run --no-prompt --allow-write=/tmp --allow-read=/tmp --ignore-env https://raw.githubusercontent.com/JLarky/lima-code/refs/heads/main/main.ts'
+alias lcode='lima mise x deno -- deno run --no-prompt --allow-read --allow-run --allow-env=HOME,XDG_RUNTIME_DIR,VSCODE_IPC_HOOK_CLI https://raw.githubusercontent.com/JLarky/lima-code/refs/heads/main/main.ts'
 ```
 
-With this you now can run `lcode --help` or `lcode /tmp` etc to execute a
-command in the context of your remote editor.
+Then run `lcode --help`, `lcode /tmp/myfile.ts`, etc. to execute commands in the
+context of your remote editor.
 
-Second, you would have to do this part every time you start your editor:
+The script directly discovers the active VS Code/Cursor IPC socket and the
+`remote-cli` binary on the VM.
 
-- start your editor and connect to the VM via SSH
-- once you are in open a built-in terminal
-- you have to start long running server that will let you execute commands in
-  the context of your IDE
+# Requirements
 
-```bash
-mise x deno -- deno run --no-prompt --allow-run --allow-write=/tmp --allow-read=/tmp --ignore-env https://raw.githubusercontent.com/JLarky/lima-code/refs/heads/main/server.ts
-```
+- An active VS Code or Cursor remote SSH session to the Lima VM
+- Deno runtime available on the VM (via `mise` or directly)
 
 # Permissions
 
-This script is trying to not to ask for too many permissions. Both commands need
-to have access to `/tmp` so that they are able to talk to each other, thus
---allow-write and --allow-read.
+| Flag                                                   | Why                                                                                                                                                                             |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--allow-read`                                         | Read filesystem for IPC socket discovery, liveness check, and CLI binary lookup. Unrestricted because VM paths (`$HOME`, `$XDG_RUNTIME_DIR`) can't be known from the host shell |
+| `--allow-run`                                          | Execute the editor's `remote-cli` binary (can't scope further — exact path unknown at alias time)                                                                               |
+| `--allow-env=HOME,XDG_RUNTIME_DIR,VSCODE_IPC_HOOK_CLI` | Read `HOME` and `XDG_RUNTIME_DIR` for path resolution, set `VSCODE_IPC_HOOK_CLI` for the editor subprocess                                                                      |
 
-Server needs to be able to run `code` or `cursor` command (which is an alias for
-something like
-`~/.cursor-server/cli/servers/Stable-id/server/bin/remote-cli/cursor` or
-`~/.vscode-server/cli/servers/Stable-id/server/bin/remote-cli/code`), thus
---allow-run.
+# How it works
 
-You can see from
-[this line](https://github.com/JLarky/lima-code/blob/main/shared.ts#L2) that we
-are only running `code` or `cursor` commands, instead of unbound shell commands.
+1. Scans `/tmp/vscode-ipc-*.sock` for active IPC sockets (validated against
+   `/proc/net/unix`)
+2. Finds the `remote-cli` binary in `~/.vscode-server/bin/` or
+   `~/.cursor-server/bin/`
+3. Runs the binary with `VSCODE_IPC_HOOK_CLI` pointing to the active socket
 
-Because we use `glob` from `node:fs` module it wants to access
-`__MINIMATCH_TESTING_PLATFORM__` environment variable, thus --ignore-env.
+Deno's permission system provides security guarantees that the script only
+accesses what it declares.
 
-# Security conserns
+# Security concerns
 
-Since `/tmp` is writable to anyone there's an attack where someone could write
-their own client and run `cursor` or `code` commands with an arbitrary
-arguments, as of this moment I don't know how we can improve this.
+The script only executes the editor's own `remote-cli` binary — never arbitrary
+commands. Arguments are passed through to the editor CLI.

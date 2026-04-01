@@ -1,4 +1,5 @@
 {
+  // Tasks for deno task command
   "tasks": {
     "dev": "deno run --allow-read --allow-run --allow-env=HOME,XDG_RUNTIME_DIR,VSCODE_IPC_HOOK_CLI --watch main.ts"
   },

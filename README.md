@@ -1,7 +1,7 @@
 Set up an alias in your shell on your host machine:
 
 ```bash
-alias lcode='lima mise x deno -- deno run --no-prompt --allow-read --allow-run --allow-env=HOME,XDG_RUNTIME_DIR,VSCODE_IPC_HOOK_CLI https://raw.githubusercontent.com/JLarky/lima-code/refs/heads/main/main.ts'
+alias lcode='lima mise x deno -- deno run --no-prompt --allow-read --allow-run --allow-env=HOME,XDG_RUNTIME_DIR,VSCODE_IPC_HOOK_CLI jsr:@jlarky/lima-code'
 ```
 
 Then run `lcode --help`, `lcode /tmp/myfile.ts`, etc. to execute commands in the

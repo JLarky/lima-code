@@ -1,8 +1,30 @@
 {
+  "name": "@jlarky/lima-code",
+  "version": "0.0.1",
+  "license": "MIT",
+  "exports": {
+    ".": "./main.ts"
+  },
+  "publish": {
+    "exclude": [
+      "*_test.ts",
+      ".github",
+      ".vscode",
+      "deno.lock"
+    ]
+  },
   "tasks": {
     "dev": "deno run --allow-read --allow-run --allow-env=HOME,XDG_RUNTIME_DIR,VSCODE_IPC_HOOK_CLI --watch main.ts"
   },
   "imports": {
-    "@std/assert": "jsr:@std/assert@1"
+    "@jlarky/gha-ts": "jsr:@jlarky/gha-ts@^0.2.1",
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/yaml": "jsr:@std/yaml@^1.0.12"
+  },
+  "fmt": {
+    "exclude": [".github/workflows/*.generated.yml"]
+  },
+  "lint": {
+    "exclude": [".github/workflows/*.generated.yml"]
   }
 }

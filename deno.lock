@@ -1,14 +1,14 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@jlarky/gha-ts@~0.2.1": "0.2.1",
+    "jsr:@jlarky/gha-ts@~0.2.2": "0.2.2",
     "jsr:@std/assert@1": "1.0.19",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "jsr:@std/yaml@^1.0.12": "1.1.0"
   },
   "jsr": {
-    "@jlarky/gha-ts@0.2.1": {
-      "integrity": "98957a4267375402305c64f35255d6b9f87852292b8626aff54e391c8a8a8060"
+    "@jlarky/gha-ts@0.2.2": {
+      "integrity": "89f65dfb2f15ee868ce90bdb69c7ce47cfbc8c42e38f5ec1b04eee5e7ecabdb9"
     },
     "@std/assert@1.0.19": {
       "integrity": "eaada96ee120cb980bc47e040f82814d786fe8162ecc53c91d8df60b8755991e",
@@ -25,7 +25,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@jlarky/gha-ts@~0.2.1",
+      "jsr:@jlarky/gha-ts@~0.2.2",
       "jsr:@std/assert@1",
       "jsr:@std/yaml@^1.0.12"
     ]
